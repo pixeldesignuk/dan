@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { DonateProvider, useDonate } from "@/lib/donate/context";
+import { HeroCtaProvider } from "@/lib/hero/context";
 import { DonateSidebar } from "@/components/ui/DonateSidebar";
 
 function DonateUI() {
@@ -25,8 +26,10 @@ function DonateUI() {
 export function DonateWrapper({ children }: { children: ReactNode }) {
   return (
     <DonateProvider>
-      {children}
-      <DonateUI />
+      <HeroCtaProvider>
+        {children}
+        <DonateUI />
+      </HeroCtaProvider>
     </DonateProvider>
   );
 }

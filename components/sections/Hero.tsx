@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useHeroCta } from "@/lib/hero/context";
 import Image from "next/image";
 import Link from "next/link";
 import { DonateButton } from "@/components/ui/DonateButton";
@@ -33,6 +34,8 @@ const defaultData: Omit<HeroSectionData, "_type" | "_key"> = {
 export function Hero({ data }: HeroProps) {
   const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const { setHeroCtaVisible } = useHeroCta();
 
   // Merge CMS data with defaults
   const content = {
@@ -46,6 +49,21 @@ export function Hero({ data }: HeroProps) {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setHeroCtaVisible(entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    if (ctaRef.current) {
+      observer.observe(ctaRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [setHeroCtaVisible]);
+
   const scrollToContent = () => {
     const nextSection = heroRef.current?.nextElementSibling;
     nextSection?.scrollIntoView({ behavior: "smooth" });
@@ -54,7 +72,7 @@ export function Hero({ data }: HeroProps) {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-[100svh] flex flex-col bg-surface-warm overflow-hidden"
+      className="relative min-h-[100svh] flex flex-col bg-surface-warm overflow-hidden pt-28 lg:pt-20"
     >
       {/* Background subtle pattern - custom tooth grid */}
       <div className="absolute inset-0 opacity-[0.03]">
@@ -78,9 +96,9 @@ export function Hero({ data }: HeroProps) {
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
             {/* Left column - Editorial headline */}
             <div className="lg:col-span-7 xl:col-span-6">
-              {/* Overline */}
+              {/* Overline - desktop only */}
               <div
-                className={`transition-all duration-700 delay-100 ${
+                className={`hidden lg:block transition-all duration-700 delay-100 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 }`}
               >
@@ -91,7 +109,7 @@ export function Hero({ data }: HeroProps) {
 
               {/* Main headline - editorial, dramatic */}
               <h1
-                className={`mt-6 font-display font-bold text-display-xl text-ink transition-all duration-700 delay-200 ${
+                className={`lg:mt-6 font-display font-bold text-5xl lg:text-display-xl text-ink transition-all duration-700 delay-200 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                 }`}
               >
@@ -102,16 +120,58 @@ export function Hero({ data }: HeroProps) {
 
               {/* Subheadline */}
               <p
-                className={`mt-8 text-body-lg text-ink-secondary max-w-lg transition-all duration-700 delay-300 ${
+                className={`mt-4 lg:mt-8 text-base lg:text-body-lg text-ink-secondary max-w-lg transition-all duration-700 delay-300 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                 }`}
               >
                 {content.subheadline}
               </p>
 
+              {/* Mobile image - between subheadline and CTA */}
+              <div
+                className={`mt-8 lg:hidden transition-all duration-1000 delay-300 ${
+                  isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+                }`}
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/10 to-brand-green/10">
+                      {content.heroImage?.asset ? (
+                        <Image
+                          src={urlFor(content.heroImage).width(800).height(600).url()}
+                          alt={content.heroImage.alt || "Dental Aid Network volunteers providing care"}
+                          fill
+                          className="object-cover"
+                          sizes="100vw"
+                          priority
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <svg
+                            viewBox="0 0 200 200"
+                            className="w-1/2 h-1/2 text-ink/5"
+                            fill="currentColor"
+                          >
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="2" />
+                            <path
+                              d="M60 110 Q100 150 140 110"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                              strokeLinecap="round"
+                            />
+                            <circle cx="70" cy="80" r="8" />
+                            <circle cx="130" cy="80" r="8" />
+                          </svg>
+                        </div>
+                      )}
+                  </div>
+                </div>
+              </div>
+
               {/* CTA group */}
               <div
-                className={`mt-10 flex flex-col sm:flex-row gap-4 transition-all duration-700 delay-400 ${
+                ref={ctaRef}
+                className={`mt-8 lg:mt-10 flex flex-col sm:flex-row gap-4 transition-all duration-700 delay-400 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                 }`}
               >
@@ -155,24 +215,24 @@ export function Hero({ data }: HeroProps) {
               )}
             </div>
 
-            {/* Right column - Visual element */}
+            {/* Right column - Visual element (desktop only) */}
             <div
-              className={`lg:col-span-5 xl:col-span-6 lg:pt-24 transition-all duration-1000 delay-300 ${
+              className={`hidden lg:block lg:col-span-5 xl:col-span-6 lg:pt-8 transition-all duration-1000 delay-300 ${
                 isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
               }`}
             >
-              <div className="relative aspect-[4/5] lg:aspect-[3/4]">
+              <div className="relative aspect-[3/4]">
                 {/* Hero image with geometric frame */}
                 <div className="absolute inset-0 bg-surface-cool border border-edge">
                   {/* Image container with editorial crop */}
-                  <div className="absolute inset-4 lg:inset-6 bg-gradient-to-br from-brand-blue/10 to-brand-green/10 overflow-hidden">
+                  <div className="absolute inset-6 bg-gradient-to-br from-brand-blue/10 to-brand-green/10 overflow-hidden">
                     {content.heroImage?.asset ? (
                       <Image
                         src={urlFor(content.heroImage).width(800).height(1000).url()}
                         alt={content.heroImage.alt || "Dental Aid Network volunteers providing care"}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        sizes="50vw"
                         priority
                       />
                     ) : (
@@ -202,7 +262,7 @@ export function Hero({ data }: HeroProps) {
                 {/* Floating stat card */}
                 {content.floatingStatValue && (
                   <div
-                    className={`absolute -left-6 lg:-left-12 bottom-16 bg-surface-card border border-edge p-6 shadow-elevated transition-all duration-700 delay-700 ${
+                    className={`absolute -left-12 bottom-16 bg-surface-card border border-edge p-6 shadow-elevated transition-all duration-700 delay-700 ${
                       isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
                     }`}
                   >
