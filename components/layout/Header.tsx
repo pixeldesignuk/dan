@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
-import { DonateButton } from "@/components/ui/DonateButton";
 import { urlFor } from "@/lib/sanity/image";
+import { useDonate } from "@/lib/donate/context";
+import { trackDonateClick } from "@/lib/posthog/events";
 import type { SiteSettings } from "@/lib/sanity/queries";
 
 interface HeaderProps {
@@ -19,6 +20,27 @@ const navLinks = [
   { href: "/about", label: "About" },
   { href: "/volunteer", label: "Volunteer" },
 ];
+
+function HeaderDonateButton({ label, placement }: { label: string; placement: string }) {
+  const { openDonate } = useDonate();
+
+  const handleClick = () => {
+    trackDonateClick({
+      placement,
+      destinationUrl: "donate-sidebar",
+    });
+    openDonate();
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className="inline-flex items-center justify-center font-semibold px-8 py-4 text-base bg-brand-orange text-white rounded-full hover:bg-brand-orange-hover focus-visible:ring-brand-orange focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-[background-color,transform] duration-300 ease-out hover:-translate-y-0.5 will-change-transform"
+    >
+      {label}
+    </button>
+  );
+}
 
 export function Header({ settings }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -77,14 +99,12 @@ export function Header({ settings }: HeaderProps) {
                 <span className="absolute -bottom-1 left-0 w-0 h-px bg-ink transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
-            <DonateButton
-              url={settings.primaryDonateUrl}
-              placement="header"
-              variant="primary"
-              className="ml-4"
-            >
-              {settings.headerCtaLabel || "Donate"}
-            </DonateButton>
+            <div className="ml-4">
+              <HeaderDonateButton
+                label={settings.headerCtaLabel || "Donate"}
+                placement="header"
+              />
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -122,14 +142,10 @@ export function Header({ settings }: HeaderProps) {
                 </Link>
               ))}
               <div className="mt-6 px-2">
-                <DonateButton
-                  url={settings.primaryDonateUrl}
+                <HeaderDonateButton
+                  label={settings.headerCtaLabel || "Donate"}
                   placement="header-mobile"
-                  variant="primary"
-                  className="w-full justify-center"
-                >
-                  {settings.headerCtaLabel || "Donate"}
-                </DonateButton>
+                />
               </div>
             </div>
           </div>

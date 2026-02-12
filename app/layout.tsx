@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileDonateBar } from "@/components/layout/MobileDonateBar";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
+import { DonateWrapper } from "@/components/layout/DonateWrapper";
 import { client } from "@/lib/sanity/client";
 import { siteSettingsQuery, type SiteSettings } from "@/lib/sanity/queries";
 
@@ -104,23 +105,25 @@ export default async function RootLayout({
     <html lang="en" className={`${inter.variable} ${malinton.variable}`}>
       <body className="flex min-h-screen flex-col">
         <PostHogProvider>
-          {/* Announcement Bar */}
-          {settings.announcementBar?.enabled && settings.announcementBar?.text && (
-            <AnnouncementBar
-              text={settings.announcementBar.text}
-              linkLabel={settings.announcementBar.linkLabel}
-              linkUrl={settings.announcementBar.linkUrl}
-            />
-          )}
+          <DonateWrapper>
+            {/* Announcement Bar */}
+            {settings.announcementBar?.enabled && settings.announcementBar?.text && (
+              <AnnouncementBar
+                text={settings.announcementBar.text}
+                linkLabel={settings.announcementBar.linkLabel}
+                linkUrl={settings.announcementBar.linkUrl}
+              />
+            )}
 
-          <Header settings={settings} />
+            <Header settings={settings} />
 
-          <main className="flex-1 pb-20 lg:pb-0">{children}</main>
+            <main className="flex-1 pb-20 lg:pb-0">{children}</main>
 
-          <Footer settings={settings} />
+            <Footer settings={settings} />
 
-          {/* Mobile sticky donate button */}
-          <MobileDonateBar donateUrl={settings.primaryDonateUrl} />
+            {/* Mobile sticky donate button */}
+            <MobileDonateBar />
+          </DonateWrapper>
         </PostHogProvider>
       </body>
     </html>

@@ -91,6 +91,7 @@ const config: Config = {
         "fade-in": "fadeIn 0.4s ease forwards",
         "scale-in": "scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "slide-in-right": "slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "slide-in-from-right": "slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
       },
       keyframes: {
         fadeUp: {
@@ -107,6 +108,10 @@ const config: Config = {
         },
         slideInRight: {
           "0%": { opacity: "0", transform: "translateX(-16px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        slideInFromRight: {
+          "0%": { opacity: "0", transform: "translateX(100%)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
         },
       },
