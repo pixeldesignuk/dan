@@ -11,6 +11,8 @@ interface DonateSidebarProps {
   project?: string;
   title?: string;
   description?: string;
+  defaultPaymentType?: "one_time" | "subscription";
+  defaultDonationType?: string;
 }
 
 const PRESET_AMOUNTS = [
@@ -32,17 +34,31 @@ export function DonateSidebar({
   project,
   title = "Support Dental Aid Network",
   description = "Your donation helps provide essential dental care to communities in need around the world.",
+  defaultPaymentType = "one_time",
+  defaultDonationType = "general",
 }: DonateSidebarProps) {
-  const [paymentType, setPaymentType] = useState<"one_time" | "subscription">("one_time");
+  const [paymentType, setPaymentType] = useState<"one_time" | "subscription">(defaultPaymentType);
   const [selectedAmount, setSelectedAmount] = useState<number>(defaultAmount);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [isCustom, setIsCustom] = useState(false);
-  const [donationType, setDonationType] = useState("general");
+  const [donationType, setDonationType] = useState(defaultDonationType);
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Reset state when props change (e.g., sidebar opened with new options)
+  useEffect(() => {
+    if (isOpen) {
+      setPaymentType(defaultPaymentType);
+      setSelectedAmount(defaultAmount);
+      setDonationType(defaultDonationType);
+      setIsCustom(false);
+      setCustomAmount("");
+      setError(null);
+    }
+  }, [isOpen, defaultPaymentType, defaultAmount, defaultDonationType]);
 
   // Get current impact message
   const currentImpact = PRESET_AMOUNTS.find((a) => a.value === selectedAmount)?.impact;

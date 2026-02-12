@@ -1,5 +1,106 @@
 import { groq } from "next-sanity";
 
+// Homepage
+export const homepageQuery = groq`
+  *[_type == "homepage"][0] {
+    sections[] {
+      _type,
+      _key,
+      // Hero section
+      _type == "heroSection" => {
+        overline,
+        headline,
+        highlightedText,
+        subheadline,
+        primaryCtaLabel,
+        secondaryCtaLabel,
+        secondaryCtaLink,
+        heroImage {
+          _type,
+          asset,
+          alt,
+          hotspot,
+          crop
+        },
+        trustMetrics,
+        floatingStatValue,
+        floatingStatLabel
+      },
+      // Trust strip section
+      _type == "trustStripSection" => {
+        enabled
+      },
+      // Donation intent section
+      _type == "donationIntentSection" => {
+        enabled,
+        problemOverline,
+        problemStatement,
+        narrativeText,
+        helpOverline,
+        helpHeadline,
+        generalDonationTitle,
+        generalDonationSubtitle,
+        generalDonationDescription,
+        generalDonationCtaLabel,
+        missionDonationTitle,
+        missionDonationSubtitle,
+        missionDonationDescription,
+        missionDonationCtaLabel
+      },
+      // Featured story section
+      _type == "featuredStorySection" => {
+        enabled,
+        overline,
+        customCtaLabel,
+        readMoreLabel,
+        viewAllLabel
+      },
+      // Latest missions section
+      _type == "latestMissionsSection" => {
+        enabled,
+        overline,
+        headline,
+        viewAllLabel,
+        count
+      },
+      // Upcoming events section
+      _type == "upcomingEventsSection" => {
+        enabled,
+        overline,
+        headline,
+        viewAllLabel,
+        count
+      },
+      // Volunteer CTA section
+      _type == "volunteerCtaSection" => {
+        enabled,
+        overline,
+        headline,
+        description,
+        ctaLabel,
+        ctaLink,
+        benefits
+      },
+      // Final CTA section
+      _type == "finalCtaSection" => {
+        enabled,
+        headline,
+        highlightedText,
+        description,
+        trustPoints,
+        ctaLabel
+      },
+      // Email capture section
+      _type == "emailCaptureSection" => {
+        enabled,
+        overline,
+        headline,
+        description
+      }
+    }
+  }
+`;
+
 // Site Settings
 export const siteSettingsQuery = groq`
   *[_type == "siteSettings"][0] {
@@ -265,3 +366,122 @@ export interface SanityImage {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PortableTextBlock = any;
+
+// Homepage Section Types
+export interface HeroSectionData {
+  _type: "heroSection";
+  _key: string;
+  overline?: string;
+  headline?: string;
+  highlightedText?: string;
+  subheadline?: string;
+  primaryCtaLabel?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaLink?: string;
+  heroImage?: SanityImage;
+  trustMetrics?: Array<{ value: string; label: string }>;
+  floatingStatValue?: string;
+  floatingStatLabel?: string;
+}
+
+export interface TrustStripSectionData {
+  _type: "trustStripSection";
+  _key: string;
+  enabled?: boolean;
+}
+
+export interface DonationIntentSectionData {
+  _type: "donationIntentSection";
+  _key: string;
+  enabled?: boolean;
+  problemOverline?: string;
+  problemStatement?: string;
+  narrativeText?: string;
+  helpOverline?: string;
+  helpHeadline?: string;
+  generalDonationTitle?: string;
+  generalDonationSubtitle?: string;
+  generalDonationDescription?: string;
+  generalDonationCtaLabel?: string;
+  missionDonationTitle?: string;
+  missionDonationSubtitle?: string;
+  missionDonationDescription?: string;
+  missionDonationCtaLabel?: string;
+}
+
+export interface FeaturedStorySectionData {
+  _type: "featuredStorySection";
+  _key: string;
+  enabled?: boolean;
+  overline?: string;
+  customCtaLabel?: string;
+  readMoreLabel?: string;
+  viewAllLabel?: string;
+}
+
+export interface LatestMissionsSectionData {
+  _type: "latestMissionsSection";
+  _key: string;
+  enabled?: boolean;
+  overline?: string;
+  headline?: string;
+  viewAllLabel?: string;
+  count?: number;
+}
+
+export interface UpcomingEventsSectionData {
+  _type: "upcomingEventsSection";
+  _key: string;
+  enabled?: boolean;
+  overline?: string;
+  headline?: string;
+  viewAllLabel?: string;
+  count?: number;
+}
+
+export interface VolunteerCtaSectionData {
+  _type: "volunteerCtaSection";
+  _key: string;
+  enabled?: boolean;
+  overline?: string;
+  headline?: string;
+  description?: string;
+  ctaLabel?: string;
+  ctaLink?: string;
+  benefits?: Array<{ value: string; label: string }>;
+}
+
+export interface FinalCtaSectionData {
+  _type: "finalCtaSection";
+  _key: string;
+  enabled?: boolean;
+  headline?: string;
+  highlightedText?: string;
+  description?: string;
+  trustPoints?: string[];
+  ctaLabel?: string;
+}
+
+export interface EmailCaptureSectionData {
+  _type: "emailCaptureSection";
+  _key: string;
+  enabled?: boolean;
+  overline?: string;
+  headline?: string;
+  description?: string;
+}
+
+export type HomepageSection =
+  | HeroSectionData
+  | TrustStripSectionData
+  | DonationIntentSectionData
+  | FeaturedStorySectionData
+  | LatestMissionsSectionData
+  | UpcomingEventsSectionData
+  | VolunteerCtaSectionData
+  | FinalCtaSectionData
+  | EmailCaptureSectionData;
+
+export interface Homepage {
+  sections: HomepageSection[];
+}

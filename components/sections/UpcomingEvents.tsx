@@ -3,12 +3,20 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
-import type { Event } from "@/lib/sanity/queries";
+import type { Event, UpcomingEventsSectionData } from "@/lib/sanity/queries";
 import { useEffect, useRef, useState } from "react";
 
 interface UpcomingEventsProps {
   events: Event[];
+  data?: UpcomingEventsSectionData;
 }
+
+const defaultData: Omit<UpcomingEventsSectionData, "_type" | "_key" | "enabled"> = {
+  overline: "Get involved",
+  headline: "Upcoming events",
+  viewAllLabel: "View all events",
+  count: 3,
+};
 
 function formatEventDate(startDate: string, endDate?: string): string {
   const start = new Date(startDate);
@@ -50,9 +58,15 @@ function getEventTypeBadge(eventType?: string): string | undefined {
   }
 }
 
-export function UpcomingEvents({ events }: UpcomingEventsProps) {
+export function UpcomingEvents({ events, data }: UpcomingEventsProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Merge CMS data with defaults
+  const content = {
+    ...defaultData,
+    ...data,
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -80,13 +94,13 @@ export function UpcomingEvents({ events }: UpcomingEventsProps) {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
-            <span className="text-overline">Get involved</span>
+            <span className="text-overline">{content.overline}</span>
             <h2
               className={`mt-4 text-display-md transition-all duration-700 ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
             >
-              Upcoming events
+              {content.headline}
             </h2>
           </div>
           <Link
@@ -95,7 +109,7 @@ export function UpcomingEvents({ events }: UpcomingEventsProps) {
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            View all events
+            {content.viewAllLabel}
             <ArrowUpRight
               className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               aria-hidden="true"

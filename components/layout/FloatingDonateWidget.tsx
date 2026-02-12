@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { trackDonateClick } from "@/lib/posthog/events";
-import { appendUTMParams, getPageCampaign } from "@/lib/utils/utm";
+import { useDonate } from "@/lib/donate/context";
 
 interface FloatingDonateWidgetProps {
-  donateUrl: string;
+  donateUrl?: string; // Kept for potential fallback, but no longer primary
 }
 
 const FREQUENCIES = [
@@ -93,12 +92,13 @@ function Dropdown({ options, value, onChange, className = "", label }: DropdownP
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function FloatingDonateWidget({ donateUrl }: FloatingDonateWidgetProps) {
   const [frequency, setFrequency] = useState("once");
   const [amount, setAmount] = useState("10");
   const [donationType, setDonationType] = useState("general");
   const [isVisible, setIsVisible] = useState(false);
-  const pathname = usePathname();
+  const { openDonate } = useDonate();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 500);
@@ -106,26 +106,23 @@ export function FloatingDonateWidget({ donateUrl }: FloatingDonateWidgetProps) {
   }, []);
 
   const handleDonateClick = () => {
-    const urlObj = new URL(donateUrl);
+    // Convert amount to pence (skip "other" - let sidebar handle custom)
+    const amountInPence = amount !== "other" ? parseInt(amount) * 100 : undefined;
 
-    if (amount !== "other") {
-      urlObj.searchParams.set("amount", amount);
-    }
-    urlObj.searchParams.set("frequency", frequency);
-    urlObj.searchParams.set("type", donationType);
-
-    const finalUrl = appendUTMParams(urlObj.toString(), {
-      campaign: getPageCampaign(pathname),
-      content: "sticky-bar",
-    });
+    // Map frequency to payment type
+    const paymentType = frequency === "monthly" ? "subscription" : "one_time";
 
     trackDonateClick({
       placement: "sticky-donation-bar",
-      destinationUrl: finalUrl,
+      destinationUrl: "donate-sidebar",
       contentType: `${frequency}-${amount}-${donationType}`,
     });
 
-    window.open(finalUrl, "_blank", "noopener,noreferrer");
+    openDonate({
+      defaultAmount: amountInPence,
+      paymentType,
+      donationType,
+    });
   };
 
   if (!isVisible) return null;

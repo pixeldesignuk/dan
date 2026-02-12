@@ -27,6 +27,16 @@ export default defineConfig({
                   .documentId("siteSettings")
                   .title("Site Settings")
               ),
+            // Homepage as a singleton
+            S.listItem()
+              .title("Homepage")
+              .id("homepage")
+              .child(
+                S.document()
+                  .schemaType("homepage")
+                  .documentId("homepage")
+                  .title("Homepage")
+              ),
             S.divider(),
             // Content types
             S.documentTypeListItem("story").title("Stories"),

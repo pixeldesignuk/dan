@@ -2,10 +2,28 @@
 
 import { EmailSignupForm } from "@/components/forms/EmailSignupForm";
 import { useEffect, useRef, useState } from "react";
+import type { EmailCaptureSectionData } from "@/lib/sanity/queries";
 
-export function EmailCapture() {
+interface EmailCaptureProps {
+  data?: EmailCaptureSectionData;
+}
+
+const defaultData: Omit<EmailCaptureSectionData, "_type" | "_key" | "enabled"> = {
+  overline: "Stay connected",
+  headline: "Get updates from the field",
+  description:
+    "Mission reports, impact stories, and ways to get involved. No spam, just meaningful updates.",
+};
+
+export function EmailCapture({ data }: EmailCaptureProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Merge CMS data with defaults
+  const content = {
+    ...defaultData,
+    ...data,
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -39,22 +57,21 @@ export function EmailCapture() {
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               }`}
             >
-              Stay connected
+              {content.overline}
             </span>
             <h2
               className={`mt-4 text-display-md transition-all duration-700 delay-100 ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
             >
-              Get updates from the field
+              {content.headline}
             </h2>
             <p
               className={`mt-4 text-body text-ink-secondary max-w-md transition-all duration-700 delay-200 ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
             >
-              Mission reports, impact stories, and ways to get involved.
-              No spam, just meaningful updates.
+              {content.description}
             </p>
           </div>
 

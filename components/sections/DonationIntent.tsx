@@ -4,14 +4,41 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { DonateButton } from "@/components/ui/DonateButton";
 import { useEffect, useRef, useState } from "react";
+import type { DonationIntentSectionData } from "@/lib/sanity/queries";
 
 interface DonationIntentProps {
   donateUrl: string;
+  data?: DonationIntentSectionData;
 }
 
-export function DonationIntent({ donateUrl }: DonationIntentProps) {
+const defaultData: Omit<DonationIntentSectionData, "_type" | "_key" | "enabled"> = {
+  problemOverline: "The challenge",
+  problemStatement: "2 billion people lack access to basic dental care",
+  narrativeText:
+    "Untreated dental disease causes chronic pain, malnutrition, and missed opportunities. For many communities, a dentist is a luxury they have never known.",
+  helpOverline: "How you can help",
+  helpHeadline: "Choose your impact",
+  generalDonationTitle: "Give where needed most",
+  generalDonationSubtitle: "Flexible funding",
+  generalDonationDescription:
+    "Your donation goes directly to equipment, supplies, and mission logistics. 100% of funds support our charitable work.",
+  generalDonationCtaLabel: "Donate now",
+  missionDonationTitle: "Fund a specific mission",
+  missionDonationSubtitle: "Direct impact",
+  missionDonationDescription:
+    "Choose a mission to support and follow along as we provide care to communities you help reach.",
+  missionDonationCtaLabel: "Browse missions",
+};
+
+export function DonationIntent({ donateUrl, data }: DonationIntentProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Merge CMS data with defaults
+  const content = {
+    ...defaultData,
+    ...data,
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -36,22 +63,20 @@ export function DonationIntent({ donateUrl }: DonationIntentProps) {
       <div className="container-editorial">
         {/* Editorial problem statement */}
         <div className="max-w-3xl">
-          <span className="text-overline">The challenge</span>
+          <span className="text-overline">{content.problemOverline}</span>
           <h2
             className={`mt-4 text-display-lg transition-all duration-700 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            2 billion people lack access to basic dental care
+            {content.problemStatement}
           </h2>
           <p
             className={`mt-6 text-body-lg text-ink-secondary max-w-2xl transition-all duration-700 delay-100 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            Untreated dental disease causes chronic pain, malnutrition, and missed
-            opportunities. For many communities, a dentist is a luxury they have
-            never known.
+            {content.narrativeText}
           </p>
         </div>
 
@@ -66,13 +91,13 @@ export function DonationIntent({ donateUrl }: DonationIntentProps) {
 
         {/* How you can help - asymmetric grid */}
         <div>
-          <span className="text-overline">How you can help</span>
+          <span className="text-overline">{content.helpOverline}</span>
           <h3
             className={`mt-4 text-display-md transition-all duration-700 delay-200 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            Choose your impact
+            {content.helpHeadline}
           </h3>
 
           <div className="mt-12 grid md:grid-cols-2 gap-px bg-edge">
@@ -96,16 +121,15 @@ export function DonationIntent({ donateUrl }: DonationIntentProps) {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-display-sm">Give where needed most</h4>
+                  <h4 className="text-display-sm">{content.generalDonationTitle}</h4>
                   <p className="mt-1 text-caption text-ink-muted uppercase tracking-wider">
-                    Flexible funding
+                    {content.generalDonationSubtitle}
                   </p>
                 </div>
               </div>
 
               <p className="mt-6 text-body text-ink-secondary">
-                Your donation goes directly to equipment, supplies, and mission
-                logistics. 100% of funds support our charitable work.
+                {content.generalDonationDescription}
               </p>
 
               <div className="mt-8">
@@ -114,7 +138,7 @@ export function DonationIntent({ donateUrl }: DonationIntentProps) {
                   placement="donation-intent-general"
                   variant="primary"
                 >
-                  Donate now
+                  {content.generalDonationCtaLabel}
                 </DonateButton>
               </div>
             </div>
@@ -140,16 +164,15 @@ export function DonationIntent({ donateUrl }: DonationIntentProps) {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-display-sm">Fund a specific mission</h4>
+                  <h4 className="text-display-sm">{content.missionDonationTitle}</h4>
                   <p className="mt-1 text-caption text-ink-muted uppercase tracking-wider">
-                    Direct impact
+                    {content.missionDonationSubtitle}
                   </p>
                 </div>
               </div>
 
               <p className="mt-6 text-body text-ink-secondary">
-                Choose a mission to support and follow along as we provide care
-                to communities you help reach.
+                {content.missionDonationDescription}
               </p>
 
               <div className="mt-8">
@@ -157,7 +180,7 @@ export function DonationIntent({ donateUrl }: DonationIntentProps) {
                   href="/missions"
                   className="btn-outline inline-flex items-center gap-2"
                 >
-                  Browse missions
+                  {content.missionDonationCtaLabel}
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
               </div>

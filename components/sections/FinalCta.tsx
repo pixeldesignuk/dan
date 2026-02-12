@@ -2,14 +2,31 @@
 
 import { DonateButton } from "@/components/ui/DonateButton";
 import { useEffect, useRef, useState } from "react";
+import type { FinalCtaSectionData } from "@/lib/sanity/queries";
 
 interface FinalCtaProps {
   donateUrl: string;
+  data?: FinalCtaSectionData;
 }
 
-export function FinalCta({ donateUrl }: FinalCtaProps) {
+const defaultData: Omit<FinalCtaSectionData, "_type" | "_key" | "enabled"> = {
+  headline: "Every smile",
+  highlightedText: "starts with you",
+  description:
+    "Your generosity funds volunteer missions, dental equipment, and life-changing care for communities who need it most.",
+  trustPoints: ["100% goes to care", "Tax deductible", "Secure giving"],
+  ctaLabel: "Give now",
+};
+
+export function FinalCta({ donateUrl, data }: FinalCtaProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Merge CMS data with defaults
+  const content = {
+    ...defaultData,
+    ...data,
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -61,9 +78,9 @@ export function FinalCta({ donateUrl }: FinalCtaProps) {
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            Every smile
+            {content.headline}
             <br />
-            <span className="text-brand-blue">starts with you</span>
+            <span className="text-brand-blue">{content.highlightedText}</span>
           </h2>
 
           <p
@@ -71,35 +88,26 @@ export function FinalCta({ donateUrl }: FinalCtaProps) {
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            Your generosity funds volunteer missions, dental equipment, and
-            life-changing care for communities who need it most.
+            {content.description}
           </p>
 
           {/* Trust points */}
-          <div
-            className={`mt-10 flex flex-wrap items-center justify-center gap-6 text-body-sm text-ink-muted transition-all duration-700 delay-200 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            <span className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-brand-green" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M2 8l4 4 8-8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              100% goes to care
-            </span>
-            <span className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-brand-green" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M2 8l4 4 8-8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Tax deductible
-            </span>
-            <span className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-brand-green" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M2 8l4 4 8-8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Secure giving
-            </span>
-          </div>
+          {content.trustPoints && content.trustPoints.length > 0 && (
+            <div
+              className={`mt-10 flex flex-wrap items-center justify-center gap-6 text-body-sm text-ink-muted transition-all duration-700 delay-200 ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              }`}
+            >
+              {content.trustPoints.map((point, index) => (
+                <span key={index} className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-brand-green" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M2 8l4 4 8-8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {point}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* CTA */}
           <div
@@ -114,7 +122,7 @@ export function FinalCta({ donateUrl }: FinalCtaProps) {
               size="large"
               showArrow
             >
-              Give now
+              {content.ctaLabel}
             </DonateButton>
           </div>
         </div>

@@ -15,6 +15,8 @@ function DonateUI() {
       project={options.project}
       title={options.title}
       description={options.description}
+      defaultPaymentType={options.paymentType}
+      defaultDonationType={options.donationType}
     />
   );
 }

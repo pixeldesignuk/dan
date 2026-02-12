@@ -3,10 +3,36 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import type { VolunteerCtaSectionData } from "@/lib/sanity/queries";
 
-export function VolunteerCta() {
+interface VolunteerCtaProps {
+  data?: VolunteerCtaSectionData;
+}
+
+const defaultData: Omit<VolunteerCtaSectionData, "_type" | "_key" | "enabled"> = {
+  overline: "Join our team",
+  headline: "Become a volunteer",
+  description:
+    "Whether you're a dental professional or passionate about making a difference, we have a place for you. Join us on our next mission.",
+  ctaLabel: "Apply to volunteer",
+  ctaLink: "/volunteer",
+  benefits: [
+    { value: "50+", label: "Volunteer professionals on each mission" },
+    { value: "2 weeks", label: "Average mission duration" },
+    { value: "100%", label: "Travel and accommodation covered" },
+    { value: "CME", label: "Continuing education credits available" },
+  ],
+};
+
+export function VolunteerCta({ data }: VolunteerCtaProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Merge CMS data with defaults
+  const content = {
+    ...defaultData,
+    ...data,
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -42,7 +68,7 @@ export function VolunteerCta() {
               }`}
               style={{ color: "#5A8A3C" }}
             >
-              Join our team
+              {content.overline}
             </span>
             <h2
               className={`mt-4 text-display-lg transition-all duration-700 delay-100 ${
@@ -50,7 +76,7 @@ export function VolunteerCta() {
               }`}
               style={{ color: "#333333" }}
             >
-              Become a volunteer
+              {content.headline}
             </h2>
             <p
               className={`mt-6 text-body-lg max-w-md transition-all duration-700 delay-200 ${
@@ -58,8 +84,7 @@ export function VolunteerCta() {
               }`}
               style={{ color: "#4A4A4A" }}
             >
-              Whether you&apos;re a dental professional or passionate about making
-              a difference, we have a place for you. Join us on our next mission.
+              {content.description}
             </p>
 
             <div
@@ -68,11 +93,11 @@ export function VolunteerCta() {
               }`}
             >
               <Link
-                href="/volunteer"
+                href={content.ctaLink || "/volunteer"}
                 className="inline-flex items-center gap-3 px-8 py-4 text-base font-semibold text-white rounded-full transition-all duration-300 hover:-translate-y-0.5 group"
                 style={{ backgroundColor: "#96CA2D" }}
               >
-                Apply to volunteer
+                {content.ctaLabel}
                 <ArrowRight
                   className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                   aria-hidden="true"
@@ -82,37 +107,32 @@ export function VolunteerCta() {
           </div>
 
           {/* Right - Benefits grid */}
-          <div
-            className={`grid grid-cols-2 gap-px transition-all duration-700 delay-400 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-            style={{ backgroundColor: "#D4E8C7" }}
-          >
-            <div className="p-8" style={{ backgroundColor: "#E8F4E0" }}>
-              <div className="font-display font-semibold text-display-sm" style={{ color: "#5A8A3C" }}>50+</div>
-              <div className="mt-2 text-body-sm" style={{ color: "#4A4A4A" }}>
-                Volunteer professionals on each mission
-              </div>
+          {content.benefits && content.benefits.length > 0 && (
+            <div
+              className={`grid grid-cols-2 gap-px transition-all duration-700 delay-400 ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              }`}
+              style={{ backgroundColor: "#D4E8C7" }}
+            >
+              {content.benefits.map((benefit, index) => (
+                <div
+                  key={index}
+                  className="p-8"
+                  style={{ backgroundColor: index % 2 === 0 ? "#E8F4E0" : "#E2F1D8" }}
+                >
+                  <div
+                    className="font-display font-semibold text-display-sm"
+                    style={{ color: "#5A8A3C" }}
+                  >
+                    {benefit.value}
+                  </div>
+                  <div className="mt-2 text-body-sm" style={{ color: "#4A4A4A" }}>
+                    {benefit.label}
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="p-8" style={{ backgroundColor: "#E2F1D8" }}>
-              <div className="font-display font-semibold text-display-sm" style={{ color: "#5A8A3C" }}>2 weeks</div>
-              <div className="mt-2 text-body-sm" style={{ color: "#4A4A4A" }}>
-                Average mission duration
-              </div>
-            </div>
-            <div className="p-8" style={{ backgroundColor: "#E2F1D8" }}>
-              <div className="font-display font-semibold text-display-sm" style={{ color: "#5A8A3C" }}>100%</div>
-              <div className="mt-2 text-body-sm" style={{ color: "#4A4A4A" }}>
-                Travel and accommodation covered
-              </div>
-            </div>
-            <div className="p-8" style={{ backgroundColor: "#E8F4E0" }}>
-              <div className="font-display font-semibold text-display-sm" style={{ color: "#5A8A3C" }}>CME</div>
-              <div className="mt-2 text-body-sm" style={{ color: "#4A4A4A" }}>
-                Continuing education credits available
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

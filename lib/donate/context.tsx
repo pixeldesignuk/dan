@@ -14,6 +14,8 @@ interface DonateOptions {
   project?: string;
   title?: string;
   description?: string;
+  paymentType?: "one_time" | "subscription";
+  donationType?: string;
 }
 
 const DonateContext = createContext<DonateContextType | undefined>(undefined);

@@ -3,12 +3,20 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
-import type { Mission } from "@/lib/sanity/queries";
+import type { Mission, LatestMissionsSectionData } from "@/lib/sanity/queries";
 import { useEffect, useRef, useState } from "react";
 
 interface LatestMissionsProps {
   missions: Mission[];
+  data?: LatestMissionsSectionData;
 }
+
+const defaultData: Omit<LatestMissionsSectionData, "_type" | "_key" | "enabled"> = {
+  overline: "Where we work",
+  headline: "Latest missions",
+  viewAllLabel: "View all missions",
+  count: 3,
+};
 
 function formatDateRange(dateRange?: { start?: string; end?: string }): string {
   if (!dateRange?.start) return "Dates TBD";
@@ -43,9 +51,15 @@ function getStatusBadge(status?: string): string | undefined {
   }
 }
 
-export function LatestMissions({ missions }: LatestMissionsProps) {
+export function LatestMissions({ missions, data }: LatestMissionsProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Merge CMS data with defaults
+  const content = {
+    ...defaultData,
+    ...data,
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -73,13 +87,13 @@ export function LatestMissions({ missions }: LatestMissionsProps) {
         {/* Header with editorial layout */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
-            <span className="text-overline">Where we work</span>
+            <span className="text-overline">{content.overline}</span>
             <h2
               className={`mt-4 text-display-md transition-all duration-700 ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
             >
-              Latest missions
+              {content.headline}
             </h2>
           </div>
           <Link
@@ -88,7 +102,7 @@ export function LatestMissions({ missions }: LatestMissionsProps) {
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            View all missions
+            {content.viewAllLabel}
             <ArrowUpRight
               className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               aria-hidden="true"

@@ -5,17 +5,31 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { DonateButton } from "@/components/ui/DonateButton";
 import { urlFor } from "@/lib/sanity/image";
-import type { Story } from "@/lib/sanity/queries";
+import type { Story, FeaturedStorySectionData } from "@/lib/sanity/queries";
 import { useEffect, useRef, useState } from "react";
 
 interface FeaturedStoryProps {
   story: Story;
   defaultDonateUrl: string;
+  data?: FeaturedStorySectionData;
 }
 
-export function FeaturedStory({ story, defaultDonateUrl }: FeaturedStoryProps) {
+const defaultData: Omit<FeaturedStorySectionData, "_type" | "_key" | "enabled"> = {
+  overline: "Impact Story",
+  customCtaLabel: "Support this cause",
+  readMoreLabel: "Read the full story",
+  viewAllLabel: "View all stories",
+};
+
+export function FeaturedStory({ story, defaultDonateUrl, data }: FeaturedStoryProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  // Merge CMS data with defaults
+  const content = {
+    ...defaultData,
+    ...data,
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -70,7 +84,7 @@ export function FeaturedStory({ story, defaultDonateUrl }: FeaturedStoryProps) {
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               }`}
             >
-              <span className="text-overline text-white/60">Impact Story</span>
+              <span className="text-overline text-white/60">{content.overline}</span>
             </div>
 
             {/* Title */}
@@ -107,13 +121,13 @@ export function FeaturedStory({ story, defaultDonateUrl }: FeaturedStoryProps) {
                 variant="primary"
                 showArrow
               >
-                Support this cause
+                {content.customCtaLabel}
               </DonateButton>
               <Link
                 href={`/stories/${story.slug.current}`}
                 className="inline-flex items-center gap-2 px-6 py-4 text-base font-semibold text-white border-2 border-white/30 rounded-full hover:border-white hover:bg-white/10 transition-all duration-300"
               >
-                Read the full story
+                {content.readMoreLabel}
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
             </div>
@@ -127,7 +141,7 @@ export function FeaturedStory({ story, defaultDonateUrl }: FeaturedStoryProps) {
           href="/stories"
           className="flex items-center justify-between px-8 lg:px-16 py-6 text-white/70 hover:text-white hover:bg-white/5 transition-colors duration-300 group"
         >
-          <span className="text-body font-medium">View all stories</span>
+          <span className="text-body font-medium">{content.viewAllLabel}</span>
           <ArrowUpRight
             className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
             aria-hidden="true"

@@ -1,17 +1,45 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { DonateButton } from "@/components/ui/DonateButton";
 import { ArrowDown, ArrowRight } from "lucide-react";
+import type { HeroSectionData } from "@/lib/sanity/queries";
+import { urlFor } from "@/lib/sanity/image";
 
 interface HeroProps {
   donateUrl: string;
+  data?: HeroSectionData;
 }
 
-export function Hero({ donateUrl }: HeroProps) {
+const defaultData: Omit<HeroSectionData, "_type" | "_key"> = {
+  overline: "Global dental care nonprofit",
+  headline: "Smiles that",
+  highlightedText: "change lives",
+  subheadline:
+    "We send volunteer dental teams to underserved communities worldwide. Your generosity transforms pain into relief, shame into confidence.",
+  primaryCtaLabel: "Give now",
+  secondaryCtaLabel: "Our missions",
+  secondaryCtaLink: "/missions",
+  trustMetrics: [
+    { value: "50,000+", label: "Patients treated" },
+    { value: "25", label: "Countries" },
+    { value: "100%", label: "Goes to care" },
+  ],
+  floatingStatValue: "$2M+",
+  floatingStatLabel: "In care delivered",
+};
+
+export function Hero({ donateUrl, data }: HeroProps) {
   const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+
+  // Merge CMS data with defaults
+  const content = {
+    ...defaultData,
+    ...data,
+  };
 
   useEffect(() => {
     // Trigger entrance animation
@@ -58,7 +86,7 @@ export function Hero({ donateUrl }: HeroProps) {
                 }`}
               >
                 <span className="text-overline text-ink-muted">
-                  Global dental care nonprofit
+                  {content.overline}
                 </span>
               </div>
 
@@ -68,9 +96,9 @@ export function Hero({ donateUrl }: HeroProps) {
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                 }`}
               >
-                Smiles that
+                {content.headline}
                 <br />
-                <span className="text-brand-blue">change lives</span>
+                <span className="text-brand-blue">{content.highlightedText}</span>
               </h1>
 
               {/* Subheadline */}
@@ -79,8 +107,7 @@ export function Hero({ donateUrl }: HeroProps) {
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                 }`}
               >
-                We send volunteer dental teams to underserved communities worldwide.
-                Your generosity transforms pain into relief, shame into confidence.
+                {content.subheadline}
               </p>
 
               {/* CTA group */}
@@ -96,38 +123,38 @@ export function Hero({ donateUrl }: HeroProps) {
                   size="large"
                   showArrow
                 >
-                  Give now
+                  {content.primaryCtaLabel}
                 </DonateButton>
                 <Link
-                  href="/missions"
+                  href={content.secondaryCtaLink || "/missions"}
                   className="btn-outline"
                 >
-                  Our missions
+                  {content.secondaryCtaLabel}
                   <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
 
               {/* Trust indicators - minimal */}
-              <div
-                className={`mt-12 pt-8 border-t border-edge transition-all duration-700 delay-500 ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-              >
-                <div className="flex flex-wrap gap-x-10 gap-y-4">
-                  <div>
-                    <div className="font-display font-semibold text-display-sm text-ink tabular-nums">50,000+</div>
-                    <div className="mt-1 text-caption text-ink-muted uppercase tracking-wider">Patients treated</div>
-                  </div>
-                  <div>
-                    <div className="font-display font-semibold text-display-sm text-ink tabular-nums">25</div>
-                    <div className="mt-1 text-caption text-ink-muted uppercase tracking-wider">Countries</div>
-                  </div>
-                  <div>
-                    <div className="font-display font-semibold text-display-sm text-ink tabular-nums">100%</div>
-                    <div className="mt-1 text-caption text-ink-muted uppercase tracking-wider">Goes to care</div>
+              {content.trustMetrics && content.trustMetrics.length > 0 && (
+                <div
+                  className={`mt-12 pt-8 border-t border-edge transition-all duration-700 delay-500 ${
+                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                >
+                  <div className="flex flex-wrap gap-x-10 gap-y-4">
+                    {content.trustMetrics.map((metric, index) => (
+                      <div key={index}>
+                        <div className="font-display font-semibold text-display-sm text-ink tabular-nums">
+                          {metric.value}
+                        </div>
+                        <div className="mt-1 text-caption text-ink-muted uppercase tracking-wider">
+                          {metric.label}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Right column - Visual element */}
@@ -137,44 +164,58 @@ export function Hero({ donateUrl }: HeroProps) {
               }`}
             >
               <div className="relative aspect-[4/5] lg:aspect-[3/4]">
-                {/* Placeholder for hero image - geometric frame */}
+                {/* Hero image with geometric frame */}
                 <div className="absolute inset-0 bg-surface-cool border border-edge">
                   {/* Image container with editorial crop */}
                   <div className="absolute inset-4 lg:inset-6 bg-gradient-to-br from-brand-blue/10 to-brand-green/10 overflow-hidden">
-                    {/* This would be a real image in production */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      {/* Decorative smile icon */}
-                      <svg
-                        viewBox="0 0 200 200"
-                        className="w-3/4 h-3/4 text-ink/5"
-                        fill="currentColor"
-                      >
-                        <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="2" />
-                        <path
-                          d="M60 110 Q100 150 140 110"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          strokeLinecap="round"
-                        />
-                        <circle cx="70" cy="80" r="8" />
-                        <circle cx="130" cy="80" r="8" />
-                      </svg>
-                    </div>
+                    {content.heroImage?.asset ? (
+                      <Image
+                        src={urlFor(content.heroImage).width(800).height(1000).url()}
+                        alt={content.heroImage.alt || "Dental Aid Network volunteers providing care"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        priority
+                      />
+                    ) : (
+                      /* Placeholder decorative smile icon */
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg
+                          viewBox="0 0 200 200"
+                          className="w-3/4 h-3/4 text-ink/5"
+                          fill="currentColor"
+                        >
+                          <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="2" />
+                          <path
+                            d="M60 110 Q100 150 140 110"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            strokeLinecap="round"
+                          />
+                          <circle cx="70" cy="80" r="8" />
+                          <circle cx="130" cy="80" r="8" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Floating stat card */}
-                <div
-                  className={`absolute -left-6 lg:-left-12 bottom-16 bg-surface-card border border-edge p-6 shadow-elevated transition-all duration-700 delay-700 ${
-                    isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
-                  }`}
-                >
-                  <div className="font-display font-semibold text-display-sm text-brand-blue">$2M+</div>
-                  <div className="mt-1 text-caption text-ink-muted uppercase tracking-wider">
-                    In care delivered
+                {content.floatingStatValue && (
+                  <div
+                    className={`absolute -left-6 lg:-left-12 bottom-16 bg-surface-card border border-edge p-6 shadow-elevated transition-all duration-700 delay-700 ${
+                      isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
+                    }`}
+                  >
+                    <div className="font-display font-semibold text-display-sm text-brand-blue">
+                      {content.floatingStatValue}
+                    </div>
+                    <div className="mt-1 text-caption text-ink-muted uppercase tracking-wider">
+                      {content.floatingStatLabel}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
