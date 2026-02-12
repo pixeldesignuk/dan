@@ -38,7 +38,6 @@ export function Footer({ settings }: FooterProps) {
             )}
             <div className="mt-8">
               <DonateButton
-                url={settings.primaryDonateUrl}
                 placement="footer"
                 variant="primary"
                 showArrow

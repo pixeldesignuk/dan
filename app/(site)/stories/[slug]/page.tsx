@@ -123,7 +123,6 @@ export default async function StoryPage({ params }: Props) {
               this. Every contribution matters.
             </p>
             <DonateButton
-              url={donateUrl}
               placement="story-detail"
               contentType="story"
               contentSlug={story.slug.current}

@@ -134,7 +134,6 @@ export function DonationIntent({ donateUrl, data }: DonationIntentProps) {
 
               <div className="mt-8">
                 <DonateButton
-                  url={donateUrl}
                   placement="donation-intent-general"
                   variant="primary"
                 >

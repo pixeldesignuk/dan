@@ -196,7 +196,6 @@ export default async function MissionPage({ params }: Props) {
               dental care to those who need it most.
             </p>
             <DonateButton
-              url={donateUrl}
               placement="mission-detail"
               contentType="mission"
               contentSlug={mission.slug.current}

@@ -197,7 +197,6 @@ export default async function EventPage({ params }: Props) {
                 : "Your donation helps make this event possible and supports our mission."}
             </p>
             <DonateButton
-              url={donateUrl}
               placement="event-detail"
               contentType="event"
               contentSlug={event.slug.current}

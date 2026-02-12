@@ -89,7 +89,6 @@ function renderSection(
       return (
         <Hero
           key={section._key}
-          donateUrl={settings.primaryDonateUrl}
           data={section as HeroSectionData}
         />
       );
@@ -193,7 +192,7 @@ function renderDefaultSections(
 ): React.ReactNode {
   return (
     <>
-      <Hero donateUrl={settings.primaryDonateUrl} />
+      <Hero />
 
       {settings.trustItems && settings.trustItems.length > 0 && (
         <TrustStrip items={settings.trustItems} />

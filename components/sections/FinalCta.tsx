@@ -116,7 +116,6 @@ export function FinalCta({ donateUrl, data }: FinalCtaProps) {
             }`}
           >
             <DonateButton
-              url={donateUrl}
               placement="final-cta"
               variant="primary"
               size="large"

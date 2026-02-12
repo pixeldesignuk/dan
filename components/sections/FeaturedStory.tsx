@@ -114,7 +114,6 @@ export function FeaturedStory({ story, defaultDonateUrl, data }: FeaturedStoryPr
               }`}
             >
               <DonateButton
-                url={donateUrl}
                 placement="featured-story"
                 contentType="story"
                 contentSlug={story.slug.current}

@@ -1,12 +1,10 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
+import { useDonate } from "@/lib/donate/context";
 import { trackDonateClick } from "@/lib/posthog/events";
-import { appendUTMParams, getPageCampaign } from "@/lib/utils/utm";
 
 interface DonateButtonProps {
-  url: string;
   placement: string;
   contentType?: string;
   contentSlug?: string;
@@ -18,7 +16,6 @@ interface DonateButtonProps {
 }
 
 export function DonateButton({
-  url,
   placement,
   contentType,
   contentSlug,
@@ -28,26 +25,17 @@ export function DonateButton({
   size = "default",
   showArrow = false,
 }: DonateButtonProps) {
-  const pathname = usePathname();
+  const { openDonate } = useDonate();
 
   const handleClick = () => {
-    const destinationUrl = appendUTMParams(url, {
-      campaign: getPageCampaign(pathname),
-      content: contentSlug,
-    });
-
     trackDonateClick({
       placement,
-      destinationUrl,
+      destinationUrl: "donate-sidebar",
       contentType,
       contentSlug,
     });
+    openDonate();
   };
-
-  const finalUrl = appendUTMParams(url, {
-    campaign: getPageCampaign(pathname),
-    content: contentSlug,
-  });
 
   const baseStyles = "inline-flex items-center justify-center font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 will-change-transform";
 
@@ -67,16 +55,13 @@ export function DonateButton({
     : "transition-[background-color,transform] duration-300 ease-out hover:-translate-y-0.5";
 
   return (
-    <a
-      href={finalUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+    <button
       onClick={handleClick}
       className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${transitionStyles} ${className}`}
-      aria-label={`Donate${contentType ? ` to ${contentType}` : ""} - opens in new tab`}
+      aria-label={`Donate${contentType ? ` to ${contentType}` : ""}`}
     >
       {children || "Donate"}
       {showArrow && <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" />}
-    </a>
+    </button>
   );
 }

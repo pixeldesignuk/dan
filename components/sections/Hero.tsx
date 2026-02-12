@@ -9,7 +9,6 @@ import type { HeroSectionData } from "@/lib/sanity/queries";
 import { urlFor } from "@/lib/sanity/image";
 
 interface HeroProps {
-  donateUrl: string;
   data?: HeroSectionData;
 }
 
@@ -31,7 +30,7 @@ const defaultData: Omit<HeroSectionData, "_type" | "_key"> = {
   floatingStatLabel: "In care delivered",
 };
 
-export function Hero({ donateUrl, data }: HeroProps) {
+export function Hero({ data }: HeroProps) {
   const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
 
@@ -117,7 +116,6 @@ export function Hero({ donateUrl, data }: HeroProps) {
                 }`}
               >
                 <DonateButton
-                  url={donateUrl}
                   placement="hero"
                   variant="primary"
                   size="large"
