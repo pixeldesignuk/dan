@@ -159,7 +159,7 @@ export function Hero({ donateUrl, data }: HeroProps) {
 
             {/* Right column - Visual element */}
             <div
-              className={`lg:col-span-5 xl:col-span-6 transition-all duration-1000 delay-300 ${
+              className={`lg:col-span-5 xl:col-span-6 lg:pt-24 transition-all duration-1000 delay-300 ${
                 isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
               }`}
             >

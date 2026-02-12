@@ -68,6 +68,34 @@ export default defineType({
       description: "Short trust statements displayed on homepage (e.g., '100% of donations go to care')",
     }),
     defineField({
+      name: "donationSettings",
+      title: "Donation Settings",
+      type: "object",
+      fields: [
+        defineField({
+          name: "donationToolbarEnabled",
+          title: "Enable Donation Toolbar",
+          type: "boolean",
+          description: "Show the floating donation toolbar on desktop",
+          initialValue: false,
+        }),
+        defineField({
+          name: "defaultAmount",
+          title: "Default Amount (£)",
+          type: "number",
+          description: "Default donation amount in pounds",
+          initialValue: 25,
+        }),
+        defineField({
+          name: "suggestedAmounts",
+          title: "Suggested Amounts",
+          type: "array",
+          of: [{ type: "number" }],
+          description: "List of suggested donation amounts in pounds",
+        }),
+      ],
+    }),
+    defineField({
       name: "socialLinks",
       title: "Social Links",
       type: "array",

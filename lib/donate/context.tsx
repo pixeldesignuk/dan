@@ -16,6 +16,7 @@ interface DonateOptions {
   description?: string;
   paymentType?: "one_time" | "subscription";
   donationType?: string;
+  fromToolbar?: boolean;
 }
 
 const DonateContext = createContext<DonateContextType | undefined>(undefined);
@@ -25,14 +26,13 @@ export function DonateProvider({ children }: { children: ReactNode }) {
   const [options, setOptions] = useState<DonateOptions>({});
 
   const openDonate = useCallback((newOptions?: DonateOptions) => {
-    if (newOptions) {
-      setOptions(newOptions);
-    }
+    setOptions(newOptions || {});
     setIsOpen(true);
   }, []);
 
   const closeDonate = useCallback(() => {
     setIsOpen(false);
+    setOptions({});
   }, []);
 
   return (

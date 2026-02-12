@@ -91,9 +91,10 @@ export async function POST(request: NextRequest) {
     };
 
     // GivePay requires HTTPS for return URLs - only add in production
+    // The return URL will receive ?session={session_id} from GivePay
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
     if (siteUrl && siteUrl.startsWith("https://")) {
-      givePayRequest.return_url = `${siteUrl}/thank-you`;
+      givePayRequest.return_url = `${siteUrl}/success`;
     }
 
     // Add subscription details if monthly

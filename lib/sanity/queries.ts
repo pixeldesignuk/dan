@@ -110,6 +110,7 @@ export const siteSettingsQuery = groq`
     headerCtaLabel,
     announcementBar,
     trustItems,
+    donationSettings,
     socialLinks,
     footerText,
     contactEmail,
@@ -284,6 +285,11 @@ export interface SiteSettings {
     linkUrl?: string;
   };
   trustItems?: string[];
+  donationSettings?: {
+    donationToolbarEnabled?: boolean;
+    defaultAmount?: number;
+    suggestedAmounts?: number[];
+  };
   socialLinks?: Array<{
     platform: "facebook" | "twitter" | "instagram" | "linkedin" | "youtube";
     url: string;

@@ -13,6 +13,7 @@ interface DonateSidebarProps {
   description?: string;
   defaultPaymentType?: "one_time" | "subscription";
   defaultDonationType?: string;
+  fromToolbar?: boolean;
 }
 
 const PRESET_AMOUNTS = [
@@ -36,6 +37,7 @@ export function DonateSidebar({
   description = "Your donation helps provide essential dental care to communities in need around the world.",
   defaultPaymentType = "one_time",
   defaultDonationType = "general",
+  fromToolbar = false,
 }: DonateSidebarProps) {
   const [paymentType, setPaymentType] = useState<"one_time" | "subscription">(defaultPaymentType);
   const [selectedAmount, setSelectedAmount] = useState<number>(defaultAmount);
@@ -47,6 +49,7 @@ export function DonateSidebar({
   const [lastName, setLastName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isEditingSelection, setIsEditingSelection] = useState(false);
 
   // Reset state when props change (e.g., sidebar opened with new options)
   useEffect(() => {
@@ -57,6 +60,7 @@ export function DonateSidebar({
       setIsCustom(false);
       setCustomAmount("");
       setError(null);
+      setIsEditingSelection(false);
     }
   }, [isOpen, defaultPaymentType, defaultAmount, defaultDonationType]);
 
@@ -198,108 +202,175 @@ export function DonateSidebar({
             </button>
           </div>
 
-          {/* Payment Type Toggle */}
-          <div className="mb-6">
-            <div className="flex rounded-full bg-surface-cool p-1">
-              <button
-                onClick={() => setPaymentType("one_time")}
-                className={`flex-1 py-3 px-4 rounded-full text-body-sm font-semibold transition-all ${
-                  paymentType === "one_time"
-                    ? "bg-brand-blue text-white shadow-soft"
-                    : "text-ink-secondary hover:text-ink"
-                }`}
-              >
-                Give Once
-              </button>
-              <button
-                onClick={() => setPaymentType("subscription")}
-                className={`flex-1 py-3 px-4 rounded-full text-body-sm font-semibold transition-all ${
-                  paymentType === "subscription"
-                    ? "bg-brand-blue text-white shadow-soft"
-                    : "text-ink-secondary hover:text-ink"
-                }`}
-              >
-                Give Monthly
-              </button>
-            </div>
-          </div>
+          {/* Confirmation View - When opened from toolbar with pre-selections */}
+          {fromToolbar && !isEditingSelection ? (
+            <>
+              {/* Selection Summary */}
+              <div className="mb-6 bg-surface-cool rounded-2xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-overline uppercase tracking-wider text-ink-muted">
+                    Your donation
+                  </span>
+                  <button
+                    onClick={() => setIsEditingSelection(true)}
+                    className="text-body-sm text-brand-blue hover:text-brand-blue-dark font-medium transition-colors"
+                  >
+                    Change
+                  </button>
+                </div>
 
-          {/* Amount Selection */}
-          <div className="mb-6">
-            <p className="text-overline uppercase tracking-wider text-ink-muted mb-4 text-center">
-              Select an amount to donate
-            </p>
-
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              {PRESET_AMOUNTS.map((preset) => (
-                <button
-                  key={preset.value}
-                  onClick={() => handleAmountSelect(preset.value)}
-                  className={`relative py-4 px-3 rounded-xl border-2 font-semibold transition-all ${
-                    selectedAmount === preset.value && !isCustom
-                      ? "border-brand-blue bg-surface-cool text-brand-blue"
-                      : "border-edge hover:border-brand-blue/50 text-ink"
-                  }`}
-                >
-                  {preset.label}
-                  {selectedAmount === preset.value && !isCustom && (
-                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-brand-blue rotate-45" />
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="font-display text-display-md text-ink">
+                    £{(finalAmount / 100).toFixed(0)}
+                  </span>
+                  {paymentType === "subscription" && (
+                    <span className="text-body text-ink-secondary">/ month</span>
                   )}
-                </button>
-              ))}
-            </div>
+                </div>
 
-            {/* Impact Message */}
-            {currentImpact && !isCustom && (
-              <div className="bg-surface-cool rounded-xl p-4 text-center mb-4">
-                <p className="text-body-sm text-ink-secondary">{currentImpact}</p>
+                <div className="flex items-center gap-2 text-body-sm text-ink-secondary">
+                  <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1 rounded-full">
+                    {paymentType === "subscription" ? "Monthly" : "One-time"}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 bg-white px-3 py-1 rounded-full">
+                    {DONATION_TYPES.find((t) => t.value === donationType)?.label || "General Donation"}
+                  </span>
+                </div>
               </div>
-            )}
 
-            {/* Custom Amount */}
-            <div className="relative">
-              <Heart className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-muted" />
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="Other Amount"
-                value={customAmount}
-                onChange={(e) => handleCustomAmountChange(e.target.value)}
-                onFocus={() => setIsCustom(true)}
-                className={`w-full pl-12 pr-4 py-4 border-b-2 text-body focus:outline-none transition-colors ${
-                  isCustom
-                    ? "border-brand-blue"
-                    : "border-edge focus:border-brand-blue"
-                }`}
-              />
-              {customAmount && (
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-muted">
-                  £{customAmount}
-                </span>
+              {/* Impact Message */}
+              {currentImpact && !isCustom && (
+                <div className="mb-6 flex items-center gap-3 p-4 border border-brand-green/30 rounded-xl bg-brand-green/5">
+                  <Heart className="h-5 w-5 text-brand-green flex-shrink-0" />
+                  <p className="text-body-sm text-ink-secondary">{currentImpact}</p>
+                </div>
               )}
-            </div>
-          </div>
 
-          {/* Donation Type */}
-          <div className="mb-6">
-            <select
-              value={donationType}
-              onChange={(e) => setDonationType(e.target.value)}
-              className="w-full px-4 py-4 border border-edge rounded-xl text-body text-ink bg-white focus:outline-none focus:border-brand-blue transition-colors appearance-none cursor-pointer"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B6B6B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "right 12px center",
-                backgroundSize: "20px",
-              }}
-            >
-              {DONATION_TYPES.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-          </div>
+              {/* Contact Information Header */}
+              <div className="mb-4">
+                <p className="text-overline uppercase tracking-wider text-ink-muted">
+                  Complete your donation
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Full Selection UI - Default view or when editing */}
+              {fromToolbar && isEditingSelection && (
+                <div className="mb-4">
+                  <button
+                    onClick={() => setIsEditingSelection(false)}
+                    className="text-body-sm text-brand-blue hover:text-brand-blue-dark font-medium transition-colors"
+                  >
+                    &larr; Back to summary
+                  </button>
+                </div>
+              )}
+
+              {/* Payment Type Toggle */}
+              <div className="mb-6">
+                <div className="flex rounded-full bg-surface-cool p-1">
+                  <button
+                    onClick={() => setPaymentType("one_time")}
+                    className={`flex-1 py-3 px-4 rounded-full text-body-sm font-semibold transition-all ${
+                      paymentType === "one_time"
+                        ? "bg-brand-blue text-white shadow-soft"
+                        : "text-ink-secondary hover:text-ink"
+                    }`}
+                  >
+                    Give Once
+                  </button>
+                  <button
+                    onClick={() => setPaymentType("subscription")}
+                    className={`flex-1 py-3 px-4 rounded-full text-body-sm font-semibold transition-all ${
+                      paymentType === "subscription"
+                        ? "bg-brand-blue text-white shadow-soft"
+                        : "text-ink-secondary hover:text-ink"
+                    }`}
+                  >
+                    Give Monthly
+                  </button>
+                </div>
+              </div>
+
+              {/* Amount Selection */}
+              <div className="mb-6">
+                <p className="text-overline uppercase tracking-wider text-ink-muted mb-4 text-center">
+                  Select an amount to donate
+                </p>
+
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  {PRESET_AMOUNTS.map((preset) => (
+                    <button
+                      key={preset.value}
+                      onClick={() => handleAmountSelect(preset.value)}
+                      className={`relative py-4 px-3 rounded-xl border-2 font-semibold transition-all ${
+                        selectedAmount === preset.value && !isCustom
+                          ? "border-brand-blue bg-surface-cool text-brand-blue"
+                          : "border-edge hover:border-brand-blue/50 text-ink"
+                      }`}
+                    >
+                      {preset.label}
+                      {selectedAmount === preset.value && !isCustom && (
+                        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3 h-3 bg-brand-blue rotate-45" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Impact Message */}
+                {currentImpact && !isCustom && (
+                  <div className="bg-surface-cool rounded-xl p-4 text-center mb-4">
+                    <p className="text-body-sm text-ink-secondary">{currentImpact}</p>
+                  </div>
+                )}
+
+                {/* Custom Amount */}
+                <div className="relative">
+                  <Heart className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-muted" />
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Other Amount"
+                    value={customAmount}
+                    onChange={(e) => handleCustomAmountChange(e.target.value)}
+                    onFocus={() => setIsCustom(true)}
+                    className={`w-full pl-12 pr-4 py-4 border-b-2 text-body focus:outline-none transition-colors ${
+                      isCustom
+                        ? "border-brand-blue"
+                        : "border-edge focus:border-brand-blue"
+                    }`}
+                  />
+                  {customAmount && (
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-muted">
+                      £{customAmount}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Donation Type */}
+              <div className="mb-6">
+                <select
+                  value={donationType}
+                  onChange={(e) => setDonationType(e.target.value)}
+                  className="w-full px-4 py-4 border border-edge rounded-xl text-body text-ink bg-white focus:outline-none focus:border-brand-blue transition-colors appearance-none cursor-pointer"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B6B6B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "right 12px center",
+                    backgroundSize: "20px",
+                  }}
+                >
+                  {DONATION_TYPES.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
 
           {/* Contact Information */}
           <div className="mb-6 space-y-4">

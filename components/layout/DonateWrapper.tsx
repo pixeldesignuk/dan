@@ -17,6 +17,7 @@ function DonateUI() {
       description={options.description}
       defaultPaymentType={options.paymentType}
       defaultDonationType={options.donationType}
+      fromToolbar={options.fromToolbar}
     />
   );
 }

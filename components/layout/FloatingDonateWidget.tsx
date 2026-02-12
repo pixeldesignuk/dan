@@ -122,6 +122,7 @@ export function FloatingDonateWidget({ donateUrl }: FloatingDonateWidgetProps) {
       defaultAmount: amountInPence,
       paymentType,
       donationType,
+      fromToolbar: true,
     });
   };
 

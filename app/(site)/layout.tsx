@@ -9,7 +9,11 @@ import { siteSettingsQuery, type SiteSettings } from "@/lib/sanity/queries";
 
 async function getSettings(): Promise<SiteSettings> {
   try {
-    const settings = await client.fetch<SiteSettings>(siteSettingsQuery);
+    const settings = await client.fetch<SiteSettings>(
+      siteSettingsQuery,
+      {},
+      { next: { revalidate: 60 } }
+    );
     return (
       settings || {
         siteName: "Dental Aid Network",
@@ -51,8 +55,10 @@ export default async function SiteLayout({
       {/* Mobile sticky donate button */}
       <MobileDonateBar />
 
-      {/* Desktop floating donate widget */}
-      <FloatingDonateWidget donateUrl={settings.primaryDonateUrl} />
+      {/* Desktop floating donate widget (feature flagged) */}
+      {settings.donationSettings?.donationToolbarEnabled && (
+        <FloatingDonateWidget donateUrl={settings.primaryDonateUrl} />
+      )}
     </DonateWrapper>
   );
 }
