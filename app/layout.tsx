@@ -6,6 +6,7 @@ import { PostHogProvider } from "@/lib/posthog/provider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileDonateBar } from "@/components/layout/MobileDonateBar";
+import { FloatingDonateWidget } from "@/components/layout/FloatingDonateWidget";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { DonateWrapper } from "@/components/layout/DonateWrapper";
 import { client } from "@/lib/sanity/client";
@@ -123,6 +124,9 @@ export default async function RootLayout({
 
             {/* Mobile sticky donate button */}
             <MobileDonateBar />
+
+            {/* Desktop floating donate widget */}
+            <FloatingDonateWidget donateUrl={settings.primaryDonateUrl} />
           </DonateWrapper>
         </PostHogProvider>
       </body>
