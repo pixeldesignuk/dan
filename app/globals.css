@@ -1,0 +1,352 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: "Inter", system-ui, sans-serif;
+    --font-display: "Malinton", system-ui, sans-serif;
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-surface text-ink font-sans;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  /* Premium focus states */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ink/20 ring-offset-2;
+  }
+
+  /* Generous tap targets on touch devices */
+  @media (pointer: coarse) {
+    button, a, input, select, textarea {
+      min-height: 48px;
+    }
+  }
+
+  /* Selection styling */
+  ::selection {
+    @apply bg-brand-blue/20 text-ink;
+  }
+}
+
+@layer components {
+  /* Container system */
+  .container-editorial {
+    @apply mx-auto w-full px-5 sm:px-8 lg:px-12;
+    max-width: 1400px;
+  }
+
+  .container-narrow {
+    @apply mx-auto w-full px-5 sm:px-8;
+    max-width: 720px;
+  }
+
+  .container-wide {
+    @apply mx-auto w-full px-5 sm:px-8 lg:px-12;
+    max-width: 1600px;
+  }
+
+  /* Section spacing - generous, premium feel */
+  .section-hero {
+    @apply py-20 md:py-28 lg:py-36;
+  }
+
+  .section-lg {
+    @apply py-20 md:py-28 lg:py-32;
+  }
+
+  .section-md {
+    @apply py-16 md:py-22 lg:py-26;
+  }
+
+  .section-sm {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+
+  /* Editorial typography - avoiding circular @apply */
+  .type-display-xl {
+    @apply font-display;
+    color: #333333;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .type-display-lg {
+    @apply font-display;
+    color: #333333;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .type-display-md {
+    @apply font-display;
+    color: #333333;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .type-display-sm {
+    @apply font-display;
+    color: #333333;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .type-overline {
+    @apply font-sans font-medium uppercase text-ink-muted;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+  }
+
+  .type-body-lg {
+    @apply text-ink-secondary leading-relaxed;
+    font-size: 1.25rem;
+    line-height: 1.7;
+  }
+
+  .type-body {
+    @apply text-ink-secondary;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  /* Premium buttons */
+  .btn-donate {
+    @apply inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-brand-orange rounded-full;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  .btn-donate:hover {
+    @apply bg-brand-orange-hover;
+    transform: translateY(-2px);
+  }
+  .btn-donate:focus-visible {
+    @apply ring-2 ring-brand-orange ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-ink rounded-full;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  .btn-primary:hover {
+    @apply bg-ink-secondary;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-ink bg-transparent border-2 border-ink rounded-full;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  }
+  .btn-outline:hover {
+    @apply bg-ink text-white;
+    transform: translateY(-2px);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 text-base font-medium text-ink-secondary;
+    transition: color 0.2s ease;
+  }
+  .btn-ghost:hover {
+    @apply text-ink;
+  }
+
+  /* Link with reveal underline */
+  .link-reveal {
+    @apply relative inline-block text-ink font-medium;
+  }
+  .link-reveal::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-px bg-ink;
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .link-reveal:hover::after {
+    @apply w-full;
+  }
+
+  /* Editorial card - minimal, no rounded corners */
+  .card-editorial {
+    @apply bg-surface-card border border-edge p-8 lg:p-10;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  }
+  .card-editorial:hover {
+    transform: translateY(-4px);
+    @apply shadow-medium;
+  }
+
+  /* Divider */
+  .divider {
+    @apply w-16 h-px bg-edge-strong;
+  }
+
+  .divider-wide {
+    @apply w-full h-px bg-edge;
+  }
+
+  /* Stat display */
+  .stat-number {
+    @apply font-display text-display-lg tabular-nums;
+  }
+
+  .stat-label {
+    @apply text-caption font-medium uppercase tracking-wider text-ink-muted;
+  }
+
+  /* Image treatments */
+  .img-reveal {
+    @apply overflow-hidden;
+  }
+  .img-reveal img {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .img-reveal:hover img {
+    transform: scale(1.03);
+  }
+
+  /* Badge - refined */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 text-caption font-medium uppercase tracking-wider;
+  }
+  .badge-dark {
+    @apply badge bg-ink text-white;
+  }
+  .badge-light {
+    @apply badge bg-surface-warm text-ink-secondary border border-edge;
+  }
+  .badge-donate {
+    @apply badge bg-donate-light text-donate;
+  }
+}
+
+/* Portable text - editorial styling */
+.portable-text {
+  @apply space-y-6;
+}
+.portable-text h2 {
+  @apply text-display-sm mt-12 mb-6;
+}
+.portable-text h3 {
+  @apply text-body-lg font-semibold mt-8 mb-4;
+}
+.portable-text p {
+  @apply text-body text-ink-secondary;
+}
+.portable-text ul, .portable-text ol {
+  @apply ml-6 space-y-3 text-ink-secondary;
+}
+.portable-text ul {
+  @apply list-disc;
+}
+.portable-text ol {
+  @apply list-decimal;
+}
+.portable-text a {
+  @apply link-reveal;
+}
+.portable-text blockquote {
+  @apply border-l-2 border-ink pl-6 italic text-ink-muted text-body-lg my-8;
+}
+
+/* Scroll-triggered animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.reveal.revealed {
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger children */
+.stagger-children > * {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.stagger-children.revealed > *:nth-child(1) { animation: fadeUp 0.5s 0.1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.stagger-children.revealed > *:nth-child(2) { animation: fadeUp 0.5s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.stagger-children.revealed > *:nth-child(3) { animation: fadeUp 0.5s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.stagger-children.revealed > *:nth-child(4) { animation: fadeUp 0.5s 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.stagger-children.revealed > *:nth-child(5) { animation: fadeUp 0.5s 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.stagger-children.revealed > *:nth-child(6) { animation: fadeUp 0.5s 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* Safe area insets for mobile */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Tabular numbers for data */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* GPU hints */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* Legacy compatibility - can be removed after full migration */
+.container-page {
+  @apply container-editorial;
+}
+.section-padding {
+  @apply section-md;
+}
+.heading-1 {
+  @apply type-display-lg;
+}
+.heading-2 {
+  @apply type-display-md;
+}
+.heading-3 {
+  @apply type-display-sm;
+}
+
+/* Component-friendly aliases */
+.text-display-xl { @apply type-display-xl; }
+.text-display-lg { @apply type-display-lg; }
+.text-display-md { @apply type-display-md; }
+.text-display-sm { @apply type-display-sm; }
+.text-overline { @apply type-overline; }
+.text-body-lg { @apply type-body-lg; }
+.text-body { @apply type-body; }
