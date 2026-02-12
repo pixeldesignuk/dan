@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { DonateButton } from "@/components/ui/DonateButton";
+import { DonationWidget } from "@/components/ui/DonationWidget";
 import { ArrowDown, ArrowRight } from "lucide-react";
 
 interface HeroProps {
@@ -48,9 +48,9 @@ export function Hero({ donateUrl }: HeroProps) {
       {/* Main content area */}
       <div className="flex-1 flex items-center">
         <div className="container-editorial w-full">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-[10%] items-center">
             {/* Left column - Editorial headline */}
-            <div className="lg:col-span-7 xl:col-span-6">
+            <div>
               {/* Overline */}
               <div
                 className={`transition-all duration-700 delay-100 ${
@@ -85,19 +85,10 @@ export function Hero({ donateUrl }: HeroProps) {
 
               {/* CTA group */}
               <div
-                className={`mt-10 flex flex-col sm:flex-row gap-4 transition-all duration-700 delay-400 ${
+                className={`mt-10 transition-all duration-700 delay-400 ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                 }`}
               >
-                <DonateButton
-                  url={donateUrl}
-                  placement="hero"
-                  variant="primary"
-                  size="large"
-                  showArrow
-                >
-                  Give now
-                </DonateButton>
                 <Link
                   href="/missions"
                   className="btn-outline"
@@ -130,52 +121,17 @@ export function Hero({ donateUrl }: HeroProps) {
               </div>
             </div>
 
-            {/* Right column - Visual element */}
+            {/* Right column - Donation Widget */}
             <div
-              className={`lg:col-span-5 xl:col-span-6 transition-all duration-1000 delay-300 ${
+              className={`transition-all duration-1000 delay-300 ${
                 isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
               }`}
             >
-              <div className="relative aspect-[4/5] lg:aspect-[3/4]">
-                {/* Placeholder for hero image - geometric frame */}
-                <div className="absolute inset-0 bg-surface-cool border border-edge">
-                  {/* Image container with editorial crop */}
-                  <div className="absolute inset-4 lg:inset-6 bg-gradient-to-br from-brand-blue/10 to-brand-green/10 overflow-hidden">
-                    {/* This would be a real image in production */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      {/* Decorative smile icon */}
-                      <svg
-                        viewBox="0 0 200 200"
-                        className="w-3/4 h-3/4 text-ink/5"
-                        fill="currentColor"
-                      >
-                        <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="2" />
-                        <path
-                          d="M60 110 Q100 150 140 110"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          strokeLinecap="round"
-                        />
-                        <circle cx="70" cy="80" r="8" />
-                        <circle cx="130" cy="80" r="8" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Floating stat card */}
-                <div
-                  className={`absolute -left-6 lg:-left-12 bottom-16 bg-surface-card border border-edge p-6 shadow-elevated transition-all duration-700 delay-700 ${
-                    isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
-                  }`}
-                >
-                  <div className="font-display font-semibold text-display-sm text-brand-blue">$2M+</div>
-                  <div className="mt-1 text-caption text-ink-muted uppercase tracking-wider">
-                    In care delivered
-                  </div>
-                </div>
-              </div>
+              <DonationWidget
+                donateUrl={donateUrl}
+                placement="hero-widget"
+                className="w-full"
+              />
             </div>
           </div>
         </div>
